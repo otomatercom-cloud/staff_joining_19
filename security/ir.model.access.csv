@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_staff_joining_application_manager,staff.joining.application.manager,model_staff_joining_application,base.group_system,1,1,1,1
+access_staff_joining_application_hr,staff.joining.application.hr,model_staff_joining_application,hr.group_hr_manager,1,1,1,0
+access_staff_joining_application_user,staff.joining.application.user,model_staff_joining_application,base.group_user,1,0,1,0
+access_staff_joining_application_public,staff.joining.application.public,model_staff_joining_application,,1,0,1,0
+access_staff_joining_approve_wizard,staff.joining.approve.wizard,model_staff_joining_approve_wizard,base.group_system,1,1,1,1
+access_staff_joining_approve_wizard_hr,staff.joining.approve.wizard.hr,model_staff_joining_approve_wizard,hr.group_hr_manager,1,1,1,1
+access_staff_joining_reject_wizard,staff.joining.reject.wizard,model_staff_joining_reject_wizard,base.group_system,1,1,1,1
+access_staff_joining_reject_wizard_hr,staff.joining.reject.wizard.hr,model_staff_joining_reject_wizard,hr.group_hr_manager,1,1,1,1

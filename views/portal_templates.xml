@@ -1,0 +1,526 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<!-- ══════════════════════════════════════════════════════════════
+     NEW APPLICATION  /join
+══════════════════════════════════════════════════════════════════ -->
+<template id="portal_joining_form" name="Staff Joining Application Form">
+<t t-call="website.layout">
+
+<div class="sj-wrap">
+<div class="sj-box">
+
+    <div class="sj-page-header">
+        <div class="sj-icon"><i class="fa fa-users"/></div>
+        <h1>Staff Joining Application</h1>
+        <p>Fill in the form below. Fields marked <span style="color:#be123c">*</span> are mandatory.</p>
+    </div>
+
+    <t t-if="success">
+        <div class="sj-success">
+            <i class="fa fa-check-circle"/>
+            <h3>Application Submitted!</h3>
+            <p>Reference: <strong t-esc="application_ref"/></p>
+            <p style="margin-top:8px;">HR team will review your application shortly.</p>
+            <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:20px;">
+                <a href="/join" class="sj-btn sj-btn-outline">New Application</a>
+                <a href="/join/update" class="sj-btn sj-btn-primary"><i class="fa fa-upload"/> Upload Missing Documents</a>
+            </div>
+        </div>
+    </t>
+
+    <t t-if="error"><div class="sj-error"><i class="fa fa-exclamation-triangle"/><t t-esc="error"/></div></t>
+
+    <t t-if="not success">
+    <form action="/join/submit" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+        <!-- Personal Information -->
+        <div class="sj-card">
+            <div class="sj-card-title"><i class="fa fa-user"/>Personal Information</div>
+            <div class="sj-section">
+                <div class="sj-grid">
+                    <div class="sj-field">
+                        <label>Full Name <span style="color:#be123c">*</span></label>
+                        <input type="text" name="full_name" placeholder="Enter your full name"
+                               t-att-value="form_data.get('full_name','')" required="required"/>
+                    </div>
+                    <div class="sj-field">
+                        <label>Email ID <span style="color:#be123c">*</span></label>
+                        <input type="email" name="email" placeholder="yourname@example.com"
+                               t-att-value="form_data.get('email','')" required="required"/>
+                    </div>
+                    <div class="sj-field">
+                        <label>Phone Number <span style="color:#be123c">*</span></label>
+                        <input type="tel" id="phone" name="phone" placeholder="10-digit mobile number"
+                               t-att-value="form_data.get('phone','')" required="required" maxlength="10"/>
+                    </div>
+                    <div class="sj-field">
+                        <label>Location / City</label>
+                        <input type="text" name="location" placeholder="City / District"
+                               t-att-value="form_data.get('location','')"/>
+                    </div>
+                    <div class="sj-field">
+                        <label>Designation</label>
+                        <select name="job_position_id">
+                            <option value="">-- Select Designation --</option>
+                            <t t-foreach="job_positions" t-as="jp">
+                                <option t-att-value="jp.id"
+                                        t-att-selected="'selected' if str(jp.id)==str(form_data.get('job_position_id','')) else None">
+                                    <t t-esc="jp.name"/>
+                                </option>
+                            </t>
+                        </select>
+                    </div>
+                    <div class="sj-field sj-span2">
+                        <label>Address <span style="color:#be123c">*</span></label>
+                        <textarea name="address" rows="3" placeholder="Full residential address"
+                                  required="required"><t t-esc="form_data.get('address','')"/></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Photo -->
+        <div class="sj-card">
+            <div class="sj-card-title"><i class="fa fa-camera"/>Photo <span style="color:#be123c">*</span></div>
+            <div class="sj-section">
+                <div class="sj-photo-area" id="photo-area">
+                    <i class="fa fa-user-circle" style="font-size:3rem;color:#c7d2fe;"/>
+                    <p>Upload your passport-size photo</p>
+                    <label class="sj-btn sj-btn-outline sj-btn-sm" for="photo">
+                        <i class="fa fa-upload"/> Choose Photo
+                    </label>
+                    <input type="file" id="photo" name="photo" accept="image/*" class="sj-file-hidden"/>
+                    <p class="sj-hint" id="photo-fname" style="margin-top:8px;">No file chosen</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Identity Proof -->
+        <div class="sj-card">
+            <div class="sj-card-title"><i class="fa fa-id-card"/>Identity Proof</div>
+            <div class="sj-section">
+                <div class="sj-grid">
+                    <div class="sj-field">
+                        <label>Aadhaar Number <span style="color:#be123c">*</span></label>
+                        <input type="text" id="aadhaar_number" name="aadhaar_number"
+                               placeholder="12-digit Aadhaar number" maxlength="14"
+                               t-att-value="form_data.get('aadhaar_number','')" required="required"/>
+                    </div>
+                    <div class="sj-field">
+                        <label>Aadhaar Document <span style="color:#94a3b8">(PDF/Image)</span></label>
+                        <div class="sj-upload-row">
+                            <label class="sj-btn-upload" for="aadhaar_doc"><i class="fa fa-upload"/>Upload</label>
+                            <input type="file" id="aadhaar_doc" name="aadhaar_doc" accept=".pdf,image/*" class="sj-file-hidden"/>
+                            <span class="sj-fname" data-for="aadhaar_doc">No file chosen</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Joining Documents -->
+        <div class="sj-card">
+            <div class="sj-card-title"><i class="fa fa-file-text"/>Joining Documents</div>
+            <div class="sj-section">
+                <div class="sj-grid">
+                    <div class="sj-field">
+                        <label>Signed NDA <span style="color:#be123c">*</span></label>
+                        <div class="sj-upload-row">
+                            <label class="sj-btn-upload" for="signed_nda"><i class="fa fa-upload"/>Upload</label>
+                            <input type="file" id="signed_nda" name="signed_nda" accept=".pdf,image/*" class="sj-file-hidden"/>
+                            <span class="sj-fname" data-for="signed_nda">No file chosen</span>
+                        </div>
+                    </div>
+                    <div class="sj-field">
+                        <label>Signed Offer Letter <span style="color:#be123c">*</span></label>
+                        <div class="sj-upload-row">
+                            <label class="sj-btn-upload" for="signed_offer_letter"><i class="fa fa-upload"/>Upload</label>
+                            <input type="file" id="signed_offer_letter" name="signed_offer_letter" accept=".pdf,image/*" class="sj-file-hidden"/>
+                            <span class="sj-fname" data-for="signed_offer_letter">No file chosen</span>
+                        </div>
+                    </div>
+                    <div class="sj-field">
+                        <label>PAN Card <span style="color:#be123c">*</span></label>
+                        <div class="sj-upload-row">
+                            <label class="sj-btn-upload" for="pan_card"><i class="fa fa-upload"/>Upload</label>
+                            <input type="file" id="pan_card" name="pan_card" accept=".pdf,image/*" class="sj-file-hidden"/>
+                            <span class="sj-fname" data-for="pan_card">No file chosen</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Educational Certificates -->
+        <div class="sj-card">
+            <div class="sj-card-title"><i class="fa fa-graduation-cap"/>Educational Certificates</div>
+            <div class="sj-section">
+                <div class="sj-grid">
+                    <div class="sj-field">
+                        <label>SSLC Certificate</label>
+                        <div class="sj-upload-row">
+                            <label class="sj-btn-upload" for="sslc_certificate"><i class="fa fa-upload"/>Upload</label>
+                            <input type="file" id="sslc_certificate" name="sslc_certificate" accept=".pdf,image/*" class="sj-file-hidden"/>
+                            <span class="sj-fname" data-for="sslc_certificate">No file chosen</span>
+                        </div>
+                    </div>
+                    <div class="sj-field">
+                        <label>Plus Two Certificate</label>
+                        <div class="sj-upload-row">
+                            <label class="sj-btn-upload" for="plus_two_certificate"><i class="fa fa-upload"/>Upload</label>
+                            <input type="file" id="plus_two_certificate" name="plus_two_certificate" accept=".pdf,image/*" class="sj-file-hidden"/>
+                            <span class="sj-fname" data-for="plus_two_certificate">No file chosen</span>
+                        </div>
+                    </div>
+                    <div class="sj-field">
+                        <label>Degree Certificate</label>
+                        <div class="sj-upload-row">
+                            <label class="sj-btn-upload" for="degree_certificate"><i class="fa fa-upload"/>Upload</label>
+                            <input type="file" id="degree_certificate" name="degree_certificate" accept=".pdf,image/*" class="sj-file-hidden"/>
+                            <span class="sj-fname" data-for="degree_certificate">No file chosen</span>
+                        </div>
+                    </div>
+                    <div class="sj-field">
+                        <label>Other Edu Certificates <span style="color:#94a3b8">(PG / Diploma)</span></label>
+                        <div class="sj-upload-row">
+                            <label class="sj-btn-upload" for="other_edu_certificates"><i class="fa fa-upload"/>Upload</label>
+                            <input type="file" id="other_edu_certificates" name="other_edu_certificates" accept=".pdf,image/*" class="sj-file-hidden"/>
+                            <span class="sj-fname" data-for="other_edu_certificates">No file chosen</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Experience and Financial -->
+        <div class="sj-card">
+            <div class="sj-card-title"><i class="fa fa-briefcase"/>Experience &amp; Financial Documents</div>
+            <div class="sj-section">
+                <div class="sj-grid">
+                    <div class="sj-field">
+                        <label>Exp / Relieving Letter</label>
+                        <div class="sj-upload-row">
+                            <label class="sj-btn-upload" for="exp_relieving_letter"><i class="fa fa-upload"/>Upload</label>
+                            <input type="file" id="exp_relieving_letter" name="exp_relieving_letter" accept=".pdf,image/*" class="sj-file-hidden"/>
+                            <span class="sj-fname" data-for="exp_relieving_letter">No file chosen</span>
+                        </div>
+                    </div>
+                    <div class="sj-field">
+                        <label>Bank Statements <span style="color:#94a3b8">(Last 6 Months)</span></label>
+                        <div class="sj-upload-row">
+                            <label class="sj-btn-upload" for="bank_statements"><i class="fa fa-upload"/>Upload</label>
+                            <input type="file" id="bank_statements" name="bank_statements" accept=".pdf,image/*" class="sj-file-hidden"/>
+                            <span class="sj-fname" data-for="bank_statements">No file chosen</span>
+                        </div>
+                    </div>
+                    <div class="sj-field">
+                        <label>Payslips <span style="color:#94a3b8">(Last 3 Months)</span></label>
+                        <div class="sj-upload-row">
+                            <label class="sj-btn-upload" for="payslips"><i class="fa fa-upload"/>Upload</label>
+                            <input type="file" id="payslips" name="payslips" accept=".pdf,image/*" class="sj-file-hidden"/>
+                            <span class="sj-fname" data-for="payslips">No file chosen</span>
+                        </div>
+                    </div>
+                    <div class="sj-field">
+                        <label>Resume <span style="color:#94a3b8">(with 2 Reference Contacts)</span></label>
+                        <div class="sj-upload-row">
+                            <label class="sj-btn-upload" for="resume"><i class="fa fa-upload"/>Upload</label>
+                            <input type="file" id="resume" name="resume" accept=".pdf,.doc,.docx" class="sj-file-hidden"/>
+                            <span class="sj-fname" data-for="resume">No file chosen</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bank Details -->
+        <div class="sj-card">
+            <div class="sj-card-title"><i class="fa fa-university"/>Bank / Account Details</div>
+            <div class="sj-section">
+                <div class="sj-grid">
+                    <div class="sj-field">
+                        <label>Account Holder Name</label>
+                        <input type="text" name="bank_account_name" placeholder="As per bank records"
+                               t-att-value="form_data.get('bank_account_name','')"/>
+                    </div>
+                    <div class="sj-field">
+                        <label>Account Number</label>
+                        <input type="text" name="bank_account_number" placeholder="Bank account number"
+                               t-att-value="form_data.get('bank_account_number','')"/>
+                    </div>
+                    <div class="sj-field">
+                        <label>Bank Name</label>
+                        <input type="text" name="bank_name" placeholder="e.g. State Bank of India"
+                               t-att-value="form_data.get('bank_name','')"/>
+                    </div>
+                    <div class="sj-field">
+                        <label>IFSC Code</label>
+                        <input type="text" id="bank_ifsc" name="bank_ifsc" placeholder="e.g. SBIN0001234"
+                               t-att-value="form_data.get('bank_ifsc','')"/>
+                    </div>
+                    <div class="sj-field">
+                        <label>Branch</label>
+                        <input type="text" name="bank_branch" placeholder="Branch name"
+                               t-att-value="form_data.get('bank_branch','')"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Submit -->
+        <div class="sj-footer">
+            <button type="submit" class="sj-btn sj-btn-primary sj-btn-lg">
+                <i class="fa fa-paper-plane"/> Submit Application
+            </button>
+            <p class="sj-hint">Missing documents? You can upload them later at
+                <a href="/join/update" class="sj-link">/join/update</a> using your phone number.</p>
+        </div>
+
+    </form>
+    </t>
+
+</div>
+</div>
+<script src="/staff_joining_19/static/src/js/portal.js"/>
+</t>
+</template>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     UPDATE LOOKUP  /join/update
+══════════════════════════════════════════════════════════════════ -->
+<template id="portal_update_lookup" name="Staff Joining - Update Lookup">
+<t t-call="website.layout">
+
+<div class="sj-wrap">
+<div class="sj-box-sm">
+
+    <div class="sj-page-header">
+        <div class="sj-icon"><i class="fa fa-cloud-upload"/></div>
+        <h1>Upload Missing Documents</h1>
+        <p>Enter the phone number you used when submitting your application.</p>
+    </div>
+
+    <t t-if="error"><div class="sj-error"><i class="fa fa-exclamation-triangle"/><t t-esc="error"/></div></t>
+
+    <div class="sj-card">
+        <div class="sj-lookup-card">
+            <form action="/join/update/find" method="post">
+                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                <div class="sj-field" style="margin-bottom:20px;">
+                    <label style="font-size:0.85rem;font-weight:700;color:#475569;margin-bottom:10px;display:block;">
+                        <i class="fa fa-mobile" style="color:#4f46e5;margin-right:6px;"/>Registered Phone Number
+                    </label>
+                    <input type="tel" name="phone" class="sj-phone-field"
+                           style="width:100%;border:2px solid #e2e8f0;border-radius:10px;padding:16px 20px;font-size:1.4rem;font-weight:700;letter-spacing:6px;text-align:center;outline:none;"
+                           placeholder="_ _ _ _ _ _ _ _ _ _"
+                           maxlength="10" required="required" autocomplete="tel"/>
+                </div>
+                <button type="submit" class="sj-btn sj-btn-primary sj-btn-lg" style="width:100%;">
+                    <i class="fa fa-search"/> Find My Application
+                </button>
+            </form>
+            <div style="text-align:center;margin-top:20px;">
+                <a href="/join" class="sj-link"><i class="fa fa-plus-circle" style="margin-right:4px;"/>Submit a new application</a>
+            </div>
+        </div>
+    </div>
+
+</div>
+</div>
+<script src="/staff_joining_19/static/src/js/portal.js"/>
+</t>
+</template>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     UPDATE FORM  /join/update/find
+══════════════════════════════════════════════════════════════════ -->
+<template id="portal_update_form" name="Staff Joining - Update Form">
+<t t-call="website.layout">
+
+<div class="sj-wrap">
+<div class="sj-box">
+
+    <div class="sj-page-header">
+        <div class="sj-icon"><i class="fa fa-cloud-upload"/></div>
+        <h1>Upload Documents</h1>
+    </div>
+
+    <t t-if="success">
+        <div class="sj-success">
+            <i class="fa fa-check-circle"/>
+            <h3>Documents Saved!</h3>
+            <p>Your documents have been updated. HR team will review them shortly.</p>
+            <a href="/join/update" class="sj-btn sj-btn-outline" style="margin-top:16px;">
+                <i class="fa fa-upload"/> Upload More
+            </a>
+        </div>
+    </t>
+    <t t-if="error"><div class="sj-error"><i class="fa fa-exclamation-triangle"/><t t-esc="error"/></div></t>
+
+    <!-- Status Card -->
+    <t t-set="total" t-value="len(doc_status)"/>
+    <t t-set="done"  t-value="sum(1 for d in doc_status if d['uploaded'])"/>
+    <div class="sj-card">
+        <div class="sj-status-header">
+            <div class="sj-status-avatar"><i class="fa fa-user"/></div>
+            <div>
+                <div class="sj-status-name" t-esc="app.full_name"/>
+                <div class="sj-status-meta">
+                    Ref: <t t-esc="app.name"/>
+                    <t t-if="app.job_position_id"> · <t t-esc="app.job_position_id.name"/></t>
+                    · <t t-esc="app.phone"/>
+                </div>
+            </div>
+        </div>
+        <div class="sj-progress-wrap">
+            <div class="sj-progress-label">
+                <span>Documents Uploaded</span>
+                <span><t t-esc="done"/> / <t t-esc="total"/> Complete</span>
+            </div>
+            <div class="sj-progress-bg">
+                <div class="sj-progress-fill" t-attf-style="width:#{ int(done*100/total) if total else 0 }%"/>
+            </div>
+        </div>
+        <div class="sj-chips">
+            <t t-foreach="doc_status" t-as="doc">
+                <span t-attf-class="sj-chip #{ 'sj-chip-ok' if doc['uploaded'] else ('sj-chip-req' if doc['required'] else 'sj-chip-opt') }">
+                    <i t-attf-class="fa #{ 'fa-check' if doc['uploaded'] else 'fa-times' }"/>
+                    <t t-esc="doc['label']"/>
+                </span>
+            </t>
+        </div>
+    </div>
+
+    <!-- Upload Form -->
+    <div class="sj-card">
+        <div class="sj-card-title"><i class="fa fa-upload"/>Select Documents to Upload</div>
+        <form action="/join/update/submit" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+            <input type="hidden" name="phone"    t-att-value="app.phone"/>
+            <input type="hidden" name="app_name" t-att-value="app.name"/>
+
+            <div class="sj-section" style="padding-bottom:8px;">
+                <p style="font-size:0.82rem;color:#94a3b8;margin-bottom:16px;">
+                    Select files to upload. Already uploaded documents will not change unless you pick a new file for them.
+                </p>
+
+                <!-- Joining Documents -->
+                <div class="sj-doc-group-label"><i class="fa fa-file-text"/>Joining Documents</div>
+                <t t-foreach="doc_status" t-as="doc">
+                    <t t-if="doc['field'] in ['photo','aadhaar_doc','signed_nda','signed_offer_letter','pan_card']">
+                        <div t-attf-class="sj-doc-row #{ 'row-done' if doc['uploaded'] else ('row-req' if doc['required'] else '') }"
+                             t-att-id="'row-'+doc['field']">
+                            <div class="sj-doc-icon">
+                                <i t-attf-class="fa #{ 'fa-check' if doc['uploaded'] else ('fa-exclamation' if doc['required'] else 'fa-file-o') }"/>
+                            </div>
+                            <div class="sj-doc-info">
+                                <div class="sj-doc-name">
+                                    <t t-esc="doc['label']"/>
+                                    <span t-if="doc['required'] and not doc['uploaded']" class="sj-badge-req">Required</span>
+                                    <span t-if="doc['uploaded']" class="sj-badge-done">✓ Done</span>
+                                </div>
+                                <div class="sj-doc-sub" t-att-id="'sub-'+doc['field']">
+                                    <t t-if="doc['uploaded']"><t t-esc="doc['filename']"/></t>
+                                    <t t-else="">Not uploaded yet</t>
+                                </div>
+                            </div>
+                            <div>
+                                <label t-attf-class="sj-btn-upload #{ 'sj-btn-replace' if doc['uploaded'] else '' }"
+                                       t-att-for="doc['field']">
+                                    <i t-attf-class="fa #{ 'fa-refresh' if doc['uploaded'] else 'fa-upload' }"/>
+                                    <t t-esc="'Replace' if doc['uploaded'] else 'Upload'"/>
+                                </label>
+                                <input type="file" t-att-id="doc['field']" t-att-name="doc['field']"
+                                       accept=".pdf,image/*" class="sj-file-hidden"/>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+
+                <!-- Educational Certificates -->
+                <div class="sj-doc-group-label" style="margin-top:20px;"><i class="fa fa-graduation-cap"/>Educational Certificates</div>
+                <t t-foreach="doc_status" t-as="doc">
+                    <t t-if="doc['field'] in ['sslc_certificate','plus_two_certificate','degree_certificate','other_edu_certificates']">
+                        <div t-attf-class="sj-doc-row #{ 'row-done' if doc['uploaded'] else '' }"
+                             t-att-id="'row-'+doc['field']">
+                            <div class="sj-doc-icon">
+                                <i t-attf-class="fa #{ 'fa-check' if doc['uploaded'] else 'fa-file-o' }"/>
+                            </div>
+                            <div class="sj-doc-info">
+                                <div class="sj-doc-name">
+                                    <t t-esc="doc['label']"/>
+                                    <span t-if="doc['uploaded']" class="sj-badge-done">✓ Done</span>
+                                </div>
+                                <div class="sj-doc-sub" t-att-id="'sub-'+doc['field']">
+                                    <t t-if="doc['uploaded']"><t t-esc="doc['filename']"/></t>
+                                    <t t-else="">Optional — upload if available</t>
+                                </div>
+                            </div>
+                            <div>
+                                <label t-attf-class="sj-btn-upload #{ 'sj-btn-replace' if doc['uploaded'] else '' }"
+                                       t-att-for="doc['field']">
+                                    <i t-attf-class="fa #{ 'fa-refresh' if doc['uploaded'] else 'fa-upload' }"/>
+                                    <t t-esc="'Replace' if doc['uploaded'] else 'Upload'"/>
+                                </label>
+                                <input type="file" t-att-id="doc['field']" t-att-name="doc['field']"
+                                       accept=".pdf,image/*" class="sj-file-hidden"/>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+
+                <!-- Experience and Financial -->
+                <div class="sj-doc-group-label" style="margin-top:20px;"><i class="fa fa-briefcase"/>Experience &amp; Financial</div>
+                <t t-foreach="doc_status" t-as="doc">
+                    <t t-if="doc['field'] in ['exp_relieving_letter','bank_statements','payslips','resume']">
+                        <div t-attf-class="sj-doc-row #{ 'row-done' if doc['uploaded'] else '' }"
+                             t-att-id="'row-'+doc['field']">
+                            <div class="sj-doc-icon">
+                                <i t-attf-class="fa #{ 'fa-check' if doc['uploaded'] else 'fa-file-o' }"/>
+                            </div>
+                            <div class="sj-doc-info">
+                                <div class="sj-doc-name">
+                                    <t t-esc="doc['label']"/>
+                                    <span t-if="doc['uploaded']" class="sj-badge-done">✓ Done</span>
+                                </div>
+                                <div class="sj-doc-sub" t-att-id="'sub-'+doc['field']">
+                                    <t t-if="doc['uploaded']"><t t-esc="doc['filename']"/></t>
+                                    <t t-else="">Optional — upload if available</t>
+                                </div>
+                            </div>
+                            <div>
+                                <label t-attf-class="sj-btn-upload #{ 'sj-btn-replace' if doc['uploaded'] else '' }"
+                                       t-att-for="doc['field']">
+                                    <i t-attf-class="fa #{ 'fa-refresh' if doc['uploaded'] else 'fa-upload' }"/>
+                                    <t t-esc="'Replace' if doc['uploaded'] else 'Upload'"/>
+                                </label>
+                                <input type="file" t-att-id="doc['field']" t-att-name="doc['field']"
+                                       accept=".pdf,image/*,.doc,.docx" class="sj-file-hidden"/>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+            </div>
+
+            <div class="sj-update-footer">
+                <button type="submit" class="sj-btn sj-btn-primary sj-btn-lg">
+                    <i class="fa fa-cloud-upload"/> Save Documents
+                </button>
+                <a href="/join/update" class="sj-btn sj-btn-ghost">
+                    <i class="fa fa-arrow-left"/> Back
+                </a>
+            </div>
+        </form>
+    </div>
+
+</div>
+</div>
+<script src="/staff_joining_19/static/src/js/portal.js"/>
+</t>
+</template>
+
+</odoo>

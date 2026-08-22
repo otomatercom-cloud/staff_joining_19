@@ -1,0 +1,238 @@
+/* Staff Joining Portal — portal.css */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+    --c-primary: #4f46e5;
+    --c-primary-dark: #4338ca;
+    --c-success: #16a34a;
+    --c-danger: #be123c;
+    --c-warn: #b45309;
+    --c-text: #1e293b;
+    --c-muted: #64748b;
+    --c-border: #e2e8f0;
+    --c-bg: #f8fafc;
+    --c-white: #ffffff;
+    --radius: 12px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.08);
+}
+
+body { font-family: 'Segoe UI', Roboto, sans-serif; }
+
+/* ── Wrap ── */
+.sj-wrap {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #eef2ff 0%, #e0f2fe 100%);
+    padding: 48px 16px;
+}
+
+/* ── Container ── */
+.sj-box { max-width: 820px; margin: 0 auto; }
+.sj-box-sm { max-width: 500px; margin: 0 auto; }
+
+/* ── Page Header ── */
+.sj-page-header { text-align: center; margin-bottom: 36px; }
+.sj-page-header .sj-icon { font-size: 2.8rem; color: var(--c-primary); margin-bottom: 12px; }
+.sj-page-header h1 { font-size: 1.9rem; font-weight: 800; color: var(--c-text); margin-bottom: 6px; }
+.sj-page-header p { color: var(--c-muted); font-size: 0.95rem; }
+
+/* ── Card ── */
+.sj-card {
+    background: var(--c-white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    margin-bottom: 24px;
+}
+.sj-card-title {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--c-primary);
+    padding: 20px 28px 0;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 2px solid #eef2ff;
+    padding-bottom: 14px;
+}
+
+/* ── Form Section ── */
+.sj-section { padding: 24px 28px; border-bottom: 1px solid #f1f5f9; }
+.sj-section:last-child { border-bottom: none; }
+
+/* ── Grid ── */
+.sj-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.sj-span2 { grid-column: 1 / -1; }
+@media (max-width: 600px) { .sj-grid { grid-template-columns: 1fr; } .sj-section { padding: 18px 16px; } }
+
+/* ── Field Group ── */
+.sj-field { display: flex; flex-direction: column; gap: 5px; }
+.sj-field label { font-size: 0.82rem; font-weight: 600; color: #475569; }
+.sj-field input,
+.sj-field textarea,
+.sj-field select {
+    border: 1.5px solid var(--c-border);
+    border-radius: 8px;
+    padding: 10px 13px;
+    font-size: 0.93rem;
+    color: var(--c-text);
+    background: #fafbfc;
+    outline: none;
+    width: 100%;
+    transition: border-color .18s, box-shadow .18s;
+}
+.sj-field input:focus, .sj-field textarea:focus, .sj-field select:focus {
+    border-color: var(--c-primary);
+    box-shadow: 0 0 0 3px rgba(79,70,229,.12);
+    background: #fff;
+}
+.sj-field textarea { resize: vertical; }
+.sj-field select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%236b7280' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 13px center;
+    cursor: pointer;
+}
+
+/* ── Photo Upload ── */
+.sj-photo-area {
+    border: 2px dashed #c7d2fe;
+    border-radius: var(--radius);
+    padding: 32px 20px;
+    text-align: center;
+    background: #f8f9ff;
+    transition: border-color .2s;
+    cursor: pointer;
+}
+.sj-photo-area:hover { border-color: var(--c-primary); }
+.sj-photo-area p { color: var(--c-muted); font-size: 0.88rem; margin: 10px 0; }
+
+/* ── Inline Upload ── */
+.sj-upload-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.sj-file-hidden { position: absolute; width: 0; height: 0; opacity: 0; pointer-events: none; }
+.sj-fname { font-size: 0.76rem; color: #94a3b8; }
+.sj-fname.chosen { color: var(--c-success); font-weight: 600; }
+
+/* ── Buttons ── */
+.sj-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 10px 22px; border-radius: 8px; font-size: 0.88rem; font-weight: 700;
+    cursor: pointer; border: none; text-decoration: none; transition: all .18s; line-height: 1;
+}
+.sj-btn-primary { background: var(--c-primary); color: #fff; }
+.sj-btn-primary:hover { background: var(--c-primary-dark); color: #fff; }
+.sj-btn-outline { border: 2px solid var(--c-primary); color: var(--c-primary); background: transparent; }
+.sj-btn-outline:hover { background: #eef2ff; }
+.sj-btn-ghost { border: 1.5px solid var(--c-border); color: var(--c-muted); background: transparent; }
+.sj-btn-ghost:hover { background: var(--c-bg); }
+.sj-btn-sm { padding: 6px 14px; font-size: 0.78rem; }
+.sj-btn-lg { padding: 13px 36px; font-size: 0.97rem; }
+.sj-btn-upload { border: 1.5px solid var(--c-primary); color: var(--c-primary); background: #fff; padding: 6px 14px; font-size: 0.78rem; font-weight: 700; border-radius: 7px; display:inline-flex; align-items:center; gap:5px; cursor:pointer; transition:all .15s; }
+.sj-btn-upload:hover { background: #eef2ff; }
+.sj-btn-replace { border-color: #d97706; color: #92400e; }
+.sj-btn-replace:hover { background: #fffbeb; }
+.sj-btn-chosen { border-color: var(--c-success); color: var(--c-success); background: #f0fdf4; }
+
+/* ── Submit Footer ── */
+.sj-footer { padding: 24px 28px; background: #f8fafc; border-top: 1px solid #f1f5f9; text-align: center; }
+.sj-footer-row { display: flex; gap: 12px; align-items: center; }
+.sj-hint { font-size: 0.76rem; color: #94a3b8; margin-top: 8px; }
+.sj-link { color: var(--c-primary); font-size: 0.86rem; font-weight: 600; text-decoration: none; }
+.sj-link:hover { text-decoration: underline; }
+
+/* ── Alerts ── */
+.sj-success {
+    background: #f0fdf4; border: 2px solid #86efac; border-radius: var(--radius);
+    padding: 40px 28px; text-align: center; color: var(--c-success); margin-bottom: 24px;
+}
+.sj-success i { color: #22c55e; font-size: 2.5rem; margin-bottom: 12px; display: block; }
+.sj-success h3 { font-size: 1.4rem; margin-bottom: 8px; }
+.sj-error {
+    background: #fff1f2; border: 2px solid #fda4af; border-radius: 10px;
+    padding: 14px 18px; color: #9f1239; margin-bottom: 20px; font-size: 0.88rem;
+    display: flex; align-items: center; gap: 10px;
+}
+
+/* ════════════════════════════════════
+   UPDATE PORTAL
+════════════════════════════════════ */
+
+/* Lookup card */
+.sj-lookup-card { padding: 36px 32px; }
+.sj-phone-field {
+    font-size: 1.4rem !important; font-weight: 700 !important;
+    letter-spacing: 6px !important; text-align: center !important;
+    padding: 16px 20px !important; border: 2px solid var(--c-border) !important;
+    border-radius: 10px !important;
+}
+.sj-phone-field:focus { border-color: var(--c-primary) !important; }
+
+/* Status header card */
+.sj-status-header {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    padding: 22px 28px; color: #fff;
+    display: flex; align-items: center; gap: 16px;
+}
+.sj-status-avatar {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: rgba(255,255,255,.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; flex-shrink: 0;
+}
+.sj-status-name { font-size: 1.15rem; font-weight: 800; }
+.sj-status-meta { font-size: 0.78rem; opacity: .8; margin-top: 3px; }
+
+/* Progress bar */
+.sj-progress-wrap { padding: 18px 28px 20px; border-bottom: 1px solid #f1f5f9; }
+.sj-progress-label { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--c-muted); margin-bottom: 8px; font-weight: 600; }
+.sj-progress-label span:last-child { color: var(--c-primary); }
+.sj-progress-bg { height: 7px; background: #e2e8f0; border-radius: 99px; overflow: hidden; }
+.sj-progress-fill { height: 100%; background: linear-gradient(90deg, #4f46e5, #7c3aed); border-radius: 99px; transition: width .6s; }
+
+/* Status chips */
+.sj-chips { display: flex; flex-wrap: wrap; gap: 7px; padding: 16px 28px 20px; border-bottom: 1px solid #f1f5f9; }
+.sj-chip { display: inline-flex; align-items: center; gap: 5px; padding: 4px 11px; border-radius: 99px; font-size: 0.74rem; font-weight: 700; border: 1.5px solid; }
+.sj-chip-ok  { background: #f0fdf4; color: #16a34a; border-color: #86efac; }
+.sj-chip-req { background: #fff1f2; color: #be123c; border-color: #fda4af; }
+.sj-chip-opt { background: #f8fafc; color: #64748b; border-color: #cbd5e1; }
+
+/* Doc rows */
+.sj-doc-group-label {
+    font-size: 0.7rem; font-weight: 800; text-transform: uppercase;
+    letter-spacing: .1em; color: #94a3b8; margin-bottom: 12px;
+    display: flex; align-items: center; gap: 8px;
+}
+.sj-doc-group-label::after { content: ''; flex: 1; height: 1px; background: #f1f5f9; }
+
+.sj-doc-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 11px 14px; border-radius: 10px;
+    border: 1.5px solid #f1f5f9; background: #fafbfc;
+    margin-bottom: 8px; transition: border-color .15s, background .15s;
+}
+.sj-doc-row:hover { border-color: #c7d2fe; background: #f8f9ff; }
+.sj-doc-row.row-done    { border-color: #bbf7d0; background: #f0fdf4; }
+.sj-doc-row.row-req     { border-color: #fecdd3; background: #fff1f2; }
+.sj-doc-row.row-picked  { border-color: #6ee7b7; background: #ecfdf5; }
+
+.sj-doc-icon {
+    width: 34px; height: 34px; border-radius: 8px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: .95rem;
+}
+.row-done  .sj-doc-icon { background: #dcfce7; color: #16a34a; }
+.row-req   .sj-doc-icon { background: #ffe4e6; color: #be123c; }
+.row-picked .sj-doc-icon { background: #d1fae5; color: #059669; }
+.sj-doc-row:not(.row-done):not(.row-req):not(.row-picked) .sj-doc-icon { background: #f1f5f9; color: #94a3b8; }
+
+.sj-doc-info { flex: 1; min-width: 0; }
+.sj-doc-name { font-size: 0.86rem; font-weight: 700; color: var(--c-text); display: flex; align-items: center; gap: 7px; }
+.sj-doc-sub  { font-size: 0.73rem; color: #94a3b8; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.row-done   .sj-doc-sub  { color: #16a34a; }
+.row-picked .sj-doc-sub  { color: #059669; font-weight: 600; }
+
+.sj-badge-req  { font-size: 0.63rem; background: #ffe4e6; color: #be123c; padding: 1px 7px; border-radius: 99px; font-weight: 800; }
+.sj-badge-done { font-size: 0.63rem; background: #dcfce7; color: #16a34a; padding: 1px 7px; border-radius: 99px; font-weight: 800; }
+
+.sj-update-footer { padding: 20px 28px; background: #f8fafc; border-top: 1px solid #f1f5f9; display: flex; gap: 12px; flex-wrap: wrap; }
+@media (max-width:500px) { .sj-update-footer { flex-direction: column; } .sj-update-footer .sj-btn { width: 100%; justify-content: center; } }

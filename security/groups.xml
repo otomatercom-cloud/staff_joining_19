@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <!-- Staff Joining: Admin Approver group
+             Appears under: Settings > Users > Human Resources > Admin Approver -->
+        <record id="group_staff_joining_admin_approver" model="res.groups">
+            <field name="name">Admin Approver</field>
+            <field name="category_id" ref="base.module_category_human_resources"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">Full access to Staff Joining module: view, create, approve and reject applications.</field>
+        </record>
+
+    </data>
+</odoo>

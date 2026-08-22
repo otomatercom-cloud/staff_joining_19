@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Top-level menu under HR -->
+    <menuitem id="menu_staff_joining_root"
+              name="Staff Joining"
+              sequence="90"
+              groups="base.group_system,hr.group_hr_manager"/>
+
+    <menuitem id="menu_staff_joining_applications"
+              name="Applications"
+              parent="menu_staff_joining_root"
+              action="action_staff_joining_application"
+              sequence="10"/>
+
+    <!-- Shortcut under Employees menu if it exists -->
+    <menuitem id="menu_staff_joining_under_employees"
+              name="Joining Applications"
+              parent="hr.menu_hr_root"
+              action="action_staff_joining_application"
+              sequence="95"
+              groups="base.group_system,hr.group_hr_manager"/>
+</odoo>
