@@ -109,7 +109,7 @@
                                t-att-value="form_data.get('aadhaar_number','')" required="required"/>
                     </div>
                     <div class="sj-field">
-                        <label>Aadhaar Document <span style="color:#94a3b8">(PDF/Image)</span></label>
+                        <label>Aadhaar Document <span class="sj-optional">(PDF/Image)</span></label>
                         <div class="sj-upload-row">
                             <label class="sj-btn-upload" for="aadhaar_doc"><i class="fa fa-upload"/>Upload</label>
                             <input type="file" id="aadhaar_doc" name="aadhaar_doc" accept=".pdf,image/*" class="sj-file-hidden"/>
@@ -183,7 +183,7 @@
                         </div>
                     </div>
                     <div class="sj-field">
-                        <label>Other Edu Certificates <span style="color:#94a3b8">(PG / Diploma)</span></label>
+                        <label>Other Edu Certificates <span class="sj-optional">(PG / Diploma)</span></label>
                         <div class="sj-upload-row">
                             <label class="sj-btn-upload" for="other_edu_certificates"><i class="fa fa-upload"/>Upload</label>
                             <input type="file" id="other_edu_certificates" name="other_edu_certificates" accept=".pdf,image/*" class="sj-file-hidden"/>
@@ -208,7 +208,7 @@
                         </div>
                     </div>
                     <div class="sj-field">
-                        <label>Bank Statements <span style="color:#94a3b8">(Last 6 Months)</span></label>
+                        <label>Bank Statements <span class="sj-optional">(Last 6 Months)</span></label>
                         <div class="sj-upload-row">
                             <label class="sj-btn-upload" for="bank_statements"><i class="fa fa-upload"/>Upload</label>
                             <input type="file" id="bank_statements" name="bank_statements" accept=".pdf,image/*" class="sj-file-hidden"/>
@@ -216,7 +216,7 @@
                         </div>
                     </div>
                     <div class="sj-field">
-                        <label>Payslips <span style="color:#94a3b8">(Last 3 Months)</span></label>
+                        <label>Payslips <span class="sj-optional">(Last 3 Months)</span></label>
                         <div class="sj-upload-row">
                             <label class="sj-btn-upload" for="payslips"><i class="fa fa-upload"/>Upload</label>
                             <input type="file" id="payslips" name="payslips" accept=".pdf,image/*" class="sj-file-hidden"/>
@@ -224,7 +224,7 @@
                         </div>
                     </div>
                     <div class="sj-field">
-                        <label>Resume <span style="color:#94a3b8">(with 2 Reference Contacts)</span></label>
+                        <label>Resume <span class="sj-optional">(with 2 Reference Contacts)</span></label>
                         <div class="sj-upload-row">
                             <label class="sj-btn-upload" for="resume"><i class="fa fa-upload"/>Upload</label>
                             <input type="file" id="resume" name="resume" accept=".pdf,.doc,.docx" class="sj-file-hidden"/>

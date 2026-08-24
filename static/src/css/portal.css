@@ -110,7 +110,7 @@ body { font-family: 'Segoe UI', Roboto, sans-serif; }
 
 /* ── Inline Upload ── */
 .sj-upload-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-.sj-file-hidden { position: absolute; width: 0; height: 0; opacity: 0; pointer-events: none; }
+.sj-file-hidden { position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden; }
 .sj-fname { font-size: 0.76rem; color: #94a3b8; }
 .sj-fname.chosen { color: var(--c-success); font-weight: 600; }
 
@@ -236,3 +236,6 @@ body { font-family: 'Segoe UI', Roboto, sans-serif; }
 
 .sj-update-footer { padding: 20px 28px; background: #f8fafc; border-top: 1px solid #f1f5f9; display: flex; gap: 12px; flex-wrap: wrap; }
 @media (max-width:500px) { .sj-update-footer { flex-direction: column; } .sj-update-footer .sj-btn { width: 100%; justify-content: center; } }
+
+/* Optional label */
+.sj-optional { font-size: 0.75rem; color: #94a3b8; font-weight: 400; margin-left: 2px; }

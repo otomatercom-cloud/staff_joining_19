@@ -1,99 +1,151 @@
 /* Staff Joining Portal — portal.js */
-document.addEventListener('DOMContentLoaded', function () {
+(function () {
+    'use strict';
 
-    // Photo preview on new application form
-    var photoInput = document.getElementById('photo');
-    var photoArea  = document.getElementById('photo-area');
-    var photoFname = document.getElementById('photo-fname');
-    if (photoInput && photoArea) {
-        photoInput.addEventListener('change', function () {
-            var file = this.files[0];
-            if (!file) return;
-            if (photoFname) photoFname.textContent = file.name;
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                var prev = photoArea.querySelector('.sj-photo-prev');
-                if (!prev) {
-                    prev = document.createElement('img');
-                    prev.className = 'sj-photo-prev';
-                    prev.style.cssText = 'width:80px;height:80px;border-radius:50%;object-fit:cover;margin:10px auto;display:block;border:3px solid #4f46e5;';
-                    photoArea.insertBefore(prev, photoArea.querySelector('.sj-hint, #photo-fname'));
+    function init() {
+
+        // ── Photo upload preview ───────────────────────────────────────
+        var photoInput = document.getElementById('photo');
+        var photoArea  = document.getElementById('photo-area');
+        var photoFname = document.getElementById('photo-fname');
+
+        if (photoInput) {
+            // Make entire photo area clickable
+            if (photoArea) {
+                photoArea.style.cursor = 'pointer';
+                photoArea.addEventListener('click', function (e) {
+                    if (e.target !== photoInput) photoInput.click();
+                });
+            }
+            photoInput.addEventListener('change', function () {
+                var file = this.files[0];
+                if (!file) return;
+                if (photoFname) photoFname.textContent = file.name;
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    var prev = document.querySelector('.sj-photo-prev');
+                    if (!prev) {
+                        prev = document.createElement('img');
+                        prev.className = 'sj-photo-prev';
+                        prev.style.cssText = 'width:90px;height:90px;border-radius:50%;object-fit:cover;margin:10px auto 6px;display:block;border:3px solid #4f46e5;box-shadow:0 2px 10px rgba(79,70,229,.3);';
+                        var icon = photoArea.querySelector('i');
+                        if (icon) icon.style.display = 'none';
+                        photoArea.insertBefore(prev, photoArea.querySelector('p'));
+                    }
+                    prev.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // ── Generic file input → show filename ────────────────────────
+        // Works for all inputs that have a matching span[data-for="inputId"]
+        document.querySelectorAll('input[type="file"].sj-file-hidden').forEach(function (input) {
+            if (input.id === 'photo') return; // handled above
+            input.addEventListener('change', function () {
+                var span = document.querySelector('span.sj-fname[data-for="' + this.id + '"]');
+                if (span) {
+                    if (this.files[0]) {
+                        span.textContent = this.files[0].name;
+                        span.style.color  = '#16a34a';
+                        span.style.fontWeight = '600';
+                    } else {
+                        span.textContent = 'No file chosen';
+                        span.style.color = '';
+                        span.style.fontWeight = '';
+                    }
                 }
-                prev.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
+            });
+        });
+
+        // ── Update portal: doc row file pick ──────────────────────────
+        document.querySelectorAll('.sj-doc-row input[type="file"]').forEach(function (input) {
+            input.addEventListener('change', function () {
+                var file = this.files[0];
+                if (!file) return;
+                var row = document.getElementById('row-' + this.id);
+                var sub = document.getElementById('sub-' + this.id);
+                var btn = this.previousElementSibling; // the label
+                if (row) {
+                    row.classList.remove('row-done', 'row-req');
+                    row.classList.add('row-picked');
+                    var icon = row.querySelector('.sj-doc-icon i');
+                    if (icon) icon.className = 'fa fa-check';
+                }
+                if (sub)  sub.textContent = '→ ' + file.name;
+                if (btn)  { btn.className = 'sj-btn-upload sj-btn-chosen'; btn.innerHTML = '<i class="fa fa-check"></i> Selected'; }
+            });
+        });
+
+        // ── Aadhaar: format XXXX XXXX XXXX ───────────────────────────
+        var aad = document.getElementById('aadhaar_number');
+        if (aad) {
+            aad.addEventListener('input', function () {
+                var v = this.value.replace(/\D/g, '').substring(0, 12);
+                this.value = v.replace(/(\d{4})(?=\d)/g, '$1 ').trim();
+            });
+        }
+
+        // ── IFSC uppercase ────────────────────────────────────────────
+        var ifsc = document.getElementById('bank_ifsc');
+        if (ifsc) {
+            ifsc.addEventListener('input', function () { this.value = this.value.toUpperCase(); });
+        }
+
+        // ── Update lookup: digits only ────────────────────────────────
+        var phoneUpd = document.querySelector('.sj-phone-field');
+        if (phoneUpd) {
+            phoneUpd.addEventListener('input', function () {
+                this.value = this.value.replace(/\D/g, '').substring(0, 10);
+            });
+        }
+
+        // ── New application form validation ───────────────────────────
+        var joinForm = document.querySelector('form[action="/join/submit"]');
+        if (joinForm) {
+            joinForm.addEventListener('submit', function (e) {
+                var ph = document.getElementById('phone');
+                if (ph && !/^[6-9]\d{9}$/.test(ph.value.trim())) {
+                    e.preventDefault();
+                    alert('Please enter a valid 10-digit Indian mobile number (starting with 6-9).');
+                    ph.focus();
+                    return;
+                }
+                var ad2 = document.getElementById('aadhaar_number');
+                if (ad2 && ad2.value.replace(/\s/g, '').length !== 12) {
+                    e.preventDefault();
+                    alert('Aadhaar number must be exactly 12 digits.');
+                    ad2.focus();
+                }
+            });
+        }
+    }
+
+    // Run after DOM is ready — works with both immediate and deferred load
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+
+    // Also hook into Odoo's website ready event if available
+    if (typeof window !== 'undefined') {
+        window.addEventListener('load', function () {
+            // Re-attach for any late-rendered elements
+            document.querySelectorAll('input[type="file"].sj-file-hidden').forEach(function (input) {
+                if (input._sjAttached) return;
+                input._sjAttached = true;
+                if (input.id === 'photo') return;
+                input.addEventListener('change', function () {
+                    var span = document.querySelector('span.sj-fname[data-for="' + this.id + '"]');
+                    if (span) {
+                        span.textContent = this.files[0] ? this.files[0].name : 'No file chosen';
+                        span.style.color = this.files[0] ? '#16a34a' : '';
+                        span.style.fontWeight = this.files[0] ? '600' : '';
+                    }
+                });
+            });
         });
     }
 
-    // Generic fname span handler for new application form
-    document.querySelectorAll('span.sj-fname[data-for]').forEach(function (span) {
-        var input = document.getElementById(span.dataset.for);
-        if (!input) return;
-        input.addEventListener('change', function () {
-            if (this.files[0]) {
-                span.textContent = this.files[0].name;
-                span.classList.add('chosen');
-            } else {
-                span.textContent = 'No file chosen';
-                span.classList.remove('chosen');
-            }
-        });
-    });
-
-    // Update portal: doc row interaction
-    document.querySelectorAll('.sj-doc-row input.sj-file-hidden').forEach(function (input) {
-        input.addEventListener('change', function () {
-            var file = this.files[0];
-            var row  = document.getElementById('row-' + this.id);
-            var sub  = document.getElementById('sub-' + this.id);
-            var btn  = this.previousElementSibling;
-            if (!file || !row) return;
-            row.classList.remove('row-done', 'row-req');
-            row.classList.add('row-picked');
-            var icon = row.querySelector('.sj-doc-icon i');
-            if (icon) { icon.className = 'fa fa-check'; }
-            if (sub)  { sub.textContent = '→ ' + file.name; }
-            if (btn)  { btn.className = 'sj-btn-upload sj-btn-chosen'; btn.innerHTML = '<i class="fa fa-check"></i> Selected'; }
-        });
-    });
-
-    // Aadhaar XXXX XXXX XXXX
-    var aadInput = document.getElementById('aadhaar_number');
-    if (aadInput) {
-        aadInput.addEventListener('input', function () {
-            var v = this.value.replace(/\D/g,'').substring(0,12);
-            this.value = v.replace(/(\d{4})(?=\d)/g,'$1 ').trim();
-        });
-    }
-
-    // IFSC uppercase
-    var ifsc = document.getElementById('bank_ifsc');
-    if (ifsc) { ifsc.addEventListener('input', function(){ this.value = this.value.toUpperCase(); }); }
-
-    // Phone - digits only on update lookup
-    var phoneUpdate = document.querySelector('.sj-phone-field');
-    if (phoneUpdate) {
-        phoneUpdate.addEventListener('input', function(){
-            this.value = this.value.replace(/\D/g,'').substring(0,10);
-        });
-    }
-
-    // Validate new application form before submit
-    var joinForm = document.querySelector('form[action="/join/submit"]');
-    if (joinForm) {
-        joinForm.addEventListener('submit', function (e) {
-            var ph = document.getElementById('phone');
-            if (ph && !/^[6-9]\d{9}$/.test(ph.value.trim())) {
-                e.preventDefault();
-                alert('Please enter a valid 10-digit Indian mobile number starting with 6-9.');
-                ph.focus(); return;
-            }
-            var ad = document.getElementById('aadhaar_number');
-            if (ad && ad.value.replace(/\s/g,'').length !== 12) {
-                e.preventDefault();
-                alert('Aadhaar number must be exactly 12 digits.');
-                ad.focus();
-            }
-        });
-    }
-});
+})();
