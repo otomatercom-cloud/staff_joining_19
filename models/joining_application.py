@@ -159,7 +159,7 @@ class StaffJoiningApplication(models.Model):
             self.env['res.partner.bank'].sudo().create({
                 'acc_number': self.bank_account_number,
                 'bank_id': self._get_or_create_bank(self.bank_name, self.bank_ifsc),
-                'partner_id': employee.address_home_id.id if employee.address_home_id else user.partner_id.id,
+                'partner_id': user.partner_id.id,
             })
 
         self.write({
