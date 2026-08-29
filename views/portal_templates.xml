@@ -83,7 +83,7 @@
 
         <!-- Photo -->
         <div class="sj-card">
-            <div class="sj-card-title"><i class="fa fa-camera"/>Photo <span style="color:#be123c">*</span></div>
+            <div class="sj-card-title"><i class="fa fa-camera"/>Photo</div>
             <div class="sj-section">
                 <div class="sj-photo-area" id="photo-area">
                     <i class="fa fa-user-circle" style="font-size:3rem;color:#c7d2fe;"/>
