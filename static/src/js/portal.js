@@ -1,86 +1,103 @@
-/* Staff Joining Portal — portal.js */
+/* Staff Joining Portal v2 */
 (function () {
     'use strict';
 
+    function onPhotoChange(e) {
+        var file = e.target.files[0];
+        if (!file) return;
+
+        var fname = document.getElementById('photo-fname');
+        if (fname) fname.textContent = file.name;
+
+        var reader = new FileReader();
+        reader.onload = function (evt) {
+            /* Re-query every time — never use closed-over variable */
+            var area = document.getElementById('photo-area');
+            if (!area) return;
+
+            var prev = area.querySelector('.sj-photo-prev');
+            if (!prev) {
+                prev = document.createElement('img');
+                prev.className = 'sj-photo-prev';
+                prev.style.cssText = [
+                    'width:90px', 'height:90px', 'border-radius:50%',
+                    'object-fit:cover', 'margin:10px auto 6px', 'display:block',
+                    'border:3px solid #4f46e5',
+                    'box-shadow:0 2px 10px rgba(79,70,229,.3)'
+                ].join(';');
+                var icon = area.querySelector('i');
+                if (icon) icon.style.display = 'none';
+                var p = area.querySelector('p');
+                if (p) area.insertBefore(prev, p);
+                else area.appendChild(prev);
+            }
+            prev.src = evt.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function onFileChange(e) {
+        var input = e.target;
+        var span  = document.querySelector('span.sj-fname[data-for="' + input.id + '"]');
+        if (!span) return;
+        if (input.files[0]) {
+            span.textContent      = input.files[0].name;
+            span.style.color      = '#16a34a';
+            span.style.fontWeight = '600';
+        } else {
+            span.textContent      = 'No file chosen';
+            span.style.color      = '';
+            span.style.fontWeight = '';
+        }
+    }
+
+    function onDocRowChange(e) {
+        var input = e.target;
+        var file  = input.files[0];
+        if (!file) return;
+
+        var row = document.getElementById('row-' + input.id);
+        var sub = document.getElementById('sub-' + input.id);
+        var btn = input.previousElementSibling;
+
+        if (row) {
+            row.classList.remove('row-done', 'row-req');
+            row.classList.add('row-picked');
+            var icon = row.querySelector('.sj-doc-icon i');
+            if (icon) icon.className = 'fa fa-check';
+        }
+        if (sub) sub.textContent = '→ ' + file.name;
+        if (btn) {
+            btn.className = 'sj-btn-upload sj-btn-chosen';
+            btn.innerHTML = '<i class="fa fa-check"></i> Selected';
+        }
+    }
+
     function init() {
-
-        // ── Photo upload preview ───────────────────────────────────────
-        var photoInput = document.getElementById('photo');
-        var photoArea  = document.getElementById('photo-area');
-        var photoFname = document.getElementById('photo-fname');
-
-        if (photoInput && photoArea) {
-            photoArea.style.cursor = 'pointer';
-            photoArea.addEventListener('click', function (e) {
-                if (e.target !== photoInput) photoInput.click();
-            });
-
-            photoInput.addEventListener('change', function () {
-                var file = this.files[0];
-                if (!file) return;
-                if (photoFname) photoFname.textContent = file.name;
-
-                var reader = new FileReader();
-                reader.onload = function (e) {
-                    if (!photoArea) return;                          // guard
-                    var prev = photoArea.querySelector('.sj-photo-prev');
-                    if (!prev) {
-                        prev = document.createElement('img');
-                        prev.className = 'sj-photo-prev';
-                        prev.style.cssText = 'width:90px;height:90px;border-radius:50%;object-fit:cover;margin:10px auto 6px;display:block;border:3px solid #4f46e5;box-shadow:0 2px 10px rgba(79,70,229,.3);';
-                        var icon = photoArea.querySelector('i');
-                        if (icon) icon.style.display = 'none';
-                        var firstP = photoArea.querySelector('p');
-                        if (firstP) photoArea.insertBefore(prev, firstP);
-                        else photoArea.appendChild(prev);
-                    }
-                    prev.src = e.target.result;
-                };
-                reader.readAsDataURL(file);
+        /* Photo */
+        var photoEl = document.getElementById('photo');
+        var areaEl  = document.getElementById('photo-area');
+        if (photoEl) photoEl.addEventListener('change', onPhotoChange);
+        if (areaEl && photoEl) {
+            areaEl.style.cursor = 'pointer';
+            areaEl.addEventListener('click', function (e) {
+                if (e.target !== photoEl) photoEl.click();
             });
         }
 
-        // ── Generic file input → show filename (span[data-for]) ───────
-        document.querySelectorAll('input[type="file"].sj-file-hidden').forEach(function (input) {
-            if (input.id === 'photo') return;
-            input.addEventListener('change', function () {
-                var span = document.querySelector('span.sj-fname[data-for="' + this.id + '"]');
-                if (!span) return;
-                if (this.files[0]) {
-                    span.textContent     = this.files[0].name;
-                    span.style.color     = '#16a34a';
-                    span.style.fontWeight = '600';
-                } else {
-                    span.textContent     = 'No file chosen';
-                    span.style.color     = '';
-                    span.style.fontWeight = '';
-                }
-            });
+        /* Generic file inputs with sj-fname span */
+        document.querySelectorAll('input[type="file"].sj-file-hidden').forEach(function (inp) {
+            if (inp.id === 'photo') return;
+            if (inp.closest('.sj-doc-row')) return; /* handled separately */
+            inp.addEventListener('change', onFileChange);
         });
 
-        // ── Update portal: doc-row file pick ──────────────────────────
-        document.querySelectorAll('.sj-doc-row input[type="file"]').forEach(function (input) {
-            input.addEventListener('change', function () {
-                var file = this.files[0];
-                if (!file) return;
-                var row = document.getElementById('row-' + this.id);
-                var sub = document.getElementById('sub-' + this.id);
-                var btn = this.previousElementSibling;
-                if (row) {
-                    row.classList.remove('row-done', 'row-req');
-                    row.classList.add('row-picked');
-                    var icon = row.querySelector('.sj-doc-icon i');
-                    if (icon) icon.className = 'fa fa-check';
-                }
-                if (sub) sub.textContent = '→ ' + file.name;
-                if (btn) {
-                    btn.className   = 'sj-btn-upload sj-btn-chosen';
-                    btn.innerHTML   = '<i class="fa fa-check"></i> Selected';
-                }
-            });
+        /* Doc-row inputs (update portal) */
+        document.querySelectorAll('.sj-doc-row input[type="file"]').forEach(function (inp) {
+            inp.addEventListener('change', onDocRowChange);
         });
 
-        // ── Aadhaar: XXXX XXXX XXXX ───────────────────────────────────
+        /* Aadhaar formatting */
         var aad = document.getElementById('aadhaar_number');
         if (aad) {
             aad.addEventListener('input', function () {
@@ -89,7 +106,7 @@
             });
         }
 
-        // ── IFSC uppercase ────────────────────────────────────────────
+        /* IFSC uppercase */
         var ifsc = document.getElementById('bank_ifsc');
         if (ifsc) {
             ifsc.addEventListener('input', function () {
@@ -97,7 +114,7 @@
             });
         }
 
-        // ── Update lookup: digits only ────────────────────────────────
+        /* Update lookup: digits only */
         var phoneUpd = document.querySelector('.sj-phone-field');
         if (phoneUpd) {
             phoneUpd.addEventListener('input', function () {
@@ -105,7 +122,7 @@
             });
         }
 
-        // ── New application: submit validation ────────────────────────
+        /* New application submit validation */
         var joinForm = document.querySelector('form[action="/join/submit"]');
         if (joinForm) {
             joinForm.addEventListener('submit', function (e) {
@@ -116,11 +133,11 @@
                     ph.focus();
                     return;
                 }
-                var ad2 = document.getElementById('aadhaar_number');
-                if (ad2 && ad2.value.replace(/\s/g, '').length !== 12) {
+                var ad = document.getElementById('aadhaar_number');
+                if (ad && ad.value.replace(/\s/g, '').length !== 12) {
                     e.preventDefault();
                     alert('Aadhaar number must be exactly 12 digits.');
-                    ad2.focus();
+                    ad.focus();
                 }
             });
         }
@@ -132,4 +149,4 @@
         init();
     }
 
-})();
+}());

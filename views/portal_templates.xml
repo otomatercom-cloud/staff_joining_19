@@ -126,7 +126,7 @@
             <div class="sj-section">
                 <div class="sj-grid">
                     <div class="sj-field">
-                        <label>Signed NDA <span style="color:#be123c">*</span></label>
+                        <label>Signed NDA</label>
                         <div class="sj-upload-row">
                             <label class="sj-btn-upload" for="signed_nda"><i class="fa fa-upload"/>Upload</label>
                             <input type="file" id="signed_nda" name="signed_nda" accept=".pdf,image/*" class="sj-file-hidden"/>
@@ -134,7 +134,7 @@
                         </div>
                     </div>
                     <div class="sj-field">
-                        <label>Signed Offer Letter <span style="color:#be123c">*</span></label>
+                        <label>Signed Offer Letter</label>
                         <div class="sj-upload-row">
                             <label class="sj-btn-upload" for="signed_offer_letter"><i class="fa fa-upload"/>Upload</label>
                             <input type="file" id="signed_offer_letter" name="signed_offer_letter" accept=".pdf,image/*" class="sj-file-hidden"/>
@@ -142,7 +142,7 @@
                         </div>
                     </div>
                     <div class="sj-field">
-                        <label>PAN Card <span style="color:#be123c">*</span></label>
+                        <label>PAN Card</label>
                         <div class="sj-upload-row">
                             <label class="sj-btn-upload" for="pan_card"><i class="fa fa-upload"/>Upload</label>
                             <input type="file" id="pan_card" name="pan_card" accept=".pdf,image/*" class="sj-file-hidden"/>
@@ -397,11 +397,44 @@
 
     <!-- Upload Form -->
     <div class="sj-card">
-        <div class="sj-card-title"><i class="fa fa-upload"/>Select Documents to Upload</div>
+        <div class="sj-card-title"><i class="fa fa-edit"/>Update Your Details</div>
         <form action="/join/update/submit" method="post" enctype="multipart/form-data">
             <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
             <input type="hidden" name="phone"    t-att-value="app.phone"/>
             <input type="hidden" name="app_name" t-att-value="app.name"/>
+            <!-- Editable personal + bank fields -->
+            <div class="sj-section">
+                <div style="font-size:0.75rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#94a3b8;margin-bottom:14px;">Personal Information</div>
+                <div class="sj-grid">
+                    <div class="sj-field"><label>Full Name</label>
+                        <input type="text" name="full_name" t-att-value="app.full_name or ''" placeholder="Full name"/>
+                    </div>
+                    <div class="sj-field"><label>Email ID</label>
+                        <input type="email" name="email" t-att-value="app.email or ''" placeholder="Email"/>
+                    </div>
+                    <div class="sj-field"><label>Location / City</label>
+                        <input type="text" name="location" t-att-value="app.location or ''" placeholder="City / District"/>
+                    </div>
+                    <div class="sj-field"><label>Bank Account Name</label>
+                        <input type="text" name="bank_account_name" t-att-value="app.bank_account_name or ''" placeholder="Account holder name"/>
+                    </div>
+                    <div class="sj-field"><label>Account Number</label>
+                        <input type="text" name="bank_account_number" t-att-value="app.bank_account_number or ''" placeholder="Account number"/>
+                    </div>
+                    <div class="sj-field"><label>Bank Name</label>
+                        <input type="text" name="bank_name" t-att-value="app.bank_name or ''" placeholder="Bank name"/>
+                    </div>
+                    <div class="sj-field"><label>IFSC Code</label>
+                        <input type="text" id="bank_ifsc" name="bank_ifsc" t-att-value="app.bank_ifsc or ''" placeholder="IFSC code"/>
+                    </div>
+                    <div class="sj-field"><label>Branch</label>
+                        <input type="text" name="bank_branch" t-att-value="app.bank_branch or ''" placeholder="Branch name"/>
+                    </div>
+                    <div class="sj-field sj-span2"><label>Address</label>
+                        <textarea name="address" rows="2" placeholder="Full residential address"><t t-esc="app.address or ''"/></textarea>
+                    </div>
+                </div>
+            </div>
 
             <div class="sj-section" style="padding-bottom:8px;">
                 <p style="font-size:0.82rem;color:#94a3b8;margin-bottom:16px;">

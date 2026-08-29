@@ -1,6 +1,6 @@
 {
     'name': 'Staff Joining Portal',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.0.1',
     'summary': 'Staff Joining Application Portal with Approval Workflow',
     'description': """
         Staff Joining Portal Module for Odoo 19

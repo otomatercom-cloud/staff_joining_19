@@ -143,6 +143,12 @@ class StaffJoiningPortalController(http.Controller):
                                   {'error': 'Session expired. Please search again.'})
 
         vals = {}
+        for field in ['full_name','email','location','address',
+                      'bank_account_name','bank_account_number',
+                      'bank_name','bank_ifsc','bank_branch']:
+            v = post.get(field,'').strip()
+            if v:
+                vals[field] = v
         _save_uploads(vals)
 
         if not vals:
